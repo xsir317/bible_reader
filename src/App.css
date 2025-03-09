@@ -1,0 +1,70 @@
+/* 移动端优先的响应式设计 */
+.app-container {
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.tabs {
+  display: flex;
+  margin-bottom: 20px;
+}
+
+.tabs a {
+  flex: 1;
+  padding: 10px;
+  text-align: center;
+  text-decoration: none;
+  color: #333;
+  border-bottom: 2px solid #eee;
+}
+
+.tabs a:hover {
+  border-bottom-color: #666;
+}
+
+.book-item {
+  padding: 15px;
+  margin: 10px 0;
+  background: #f8f9fa;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.chapters-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 10px;
+}
+
+.chapter-btn {
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  background: white;
+}
+
+.navigation {
+  display: flex;
+  justify-content: space-between;
+  margin: 20px 0;
+}
+
+.verses p {
+  line-height: 1.6;
+  margin: 10px 0;
+}
+
+button {
+  padding: 8px 16px;
+  background: #007bff;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+button:disabled {
+  background: #6c757d;
+  cursor: not-allowed;
+}
