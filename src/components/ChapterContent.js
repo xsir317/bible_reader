@@ -23,24 +23,29 @@ export default function ChapterContent() {
         }
     };
 
+    // 修改后的按钮容器部分
     return (
         <div className="chapter-content">
-            <button onClick={() => navigate(-1)}>返回章节列表</button>
-            <div className="navigation">
-                <button
-                    onClick={() => handleChapterChange(-1)}
-                    disabled={parseInt(chapterId) === 1}
-                >
-                    上一章
+            <div className="chapter-controls">
+                <button onClick={() => navigate(-1)} className="back-btn">
+                    返回
                 </button>
-                <h3>第 {chapterId} 章</h3>
-                <button
-                    onClick={() => handleChapterChange(1)}
-                    disabled={parseInt(chapterId) === totalChapters}
-                >
-                    下一章
-                </button>
+                <div className="chapter-nav">
+                    <button
+                        onClick={() => handleChapterChange(-1)}
+                        disabled={parseInt(chapterId) === 1}
+                    >
+                        上一章
+                    </button>
+                    <button
+                        onClick={() => handleChapterChange(1)}
+                        disabled={parseInt(chapterId) === totalChapters}
+                    >
+                        下一章
+                    </button>
+                </div>
             </div>
+            <h3>第 {chapterId} 章</h3>
             <div className="verses">
                 {verses.map(verse => (
                     <p key={verse.verse_num}>
