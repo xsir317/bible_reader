@@ -7,7 +7,7 @@ export default function BookList() {
     const navigate = useNavigate();
 
     useEffect(() => {
-        api.get('contents/content/books-menu')
+        api.get('/contents/content/books-menu')
             .then(data => {
                 const booksArray = Object.entries(data).map(([id, book]) => ({
                     id: parseInt(id),

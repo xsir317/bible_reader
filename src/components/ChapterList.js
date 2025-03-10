@@ -10,7 +10,7 @@ export default function ChapterList() {
 
     useEffect(() => {
         if (!book) {
-            api.get('contents/content/books-menu')
+            api.get('/contents/content/books-menu')
                 .then(data => {
                     const booksArray = Object.entries(data).map(([id, b]) => ({
                         id: parseInt(id),

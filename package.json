@@ -1,8 +1,8 @@
 {
   "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
-    "test": "react-scripts test",
+    "start": "set NODE_OPTIONS=--openssl-legacy-provider && craco start",
+    "build": "set NODE_OPTIONS=--openssl-legacy-provider && craco build",
+    "test": "set NODE_OPTIONS=--openssl-legacy-provider && craco test",
     "eject": "react-scripts eject"
   },
   "browserslist": {
@@ -23,12 +23,21 @@
     "eslint": "^9.0.0"
   },
   "dependencies": {
+    "@craco/craco": "^7.1.0",
+    "assert": "^2.1.0",
     "axios": "^1.8.2",
+    "buffer": "^6.0.3",
+    "constants-browserify": "^1.0.0",
+    "crypto-browserify": "^3.12.1",
     "crypto-js": "^4.2.0",
     "node-rsa": "^1.1.1",
+    "process": "^0.11.10",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "react-router-dom": "^7.3.0",
-    "react-scripts": "^5.0.1"
+    "react-scripts": "^5.0.1",
+    "stream-browserify": "^3.0.0",
+    "util": "^0.12.5",
+    "vm-browserify": "^1.1.2"
   }
 }
