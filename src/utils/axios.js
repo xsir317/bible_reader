@@ -10,14 +10,22 @@ const http = axios.create({
 // 请求拦截器
 http.interceptors.request.use(async (config) => {
     // 跳过初始化相关接口
-    if (config.url.includes('system/init') || config.url.includes('system/set-key')) {
+    if (config.url.includes('system/init') || config.url.includes('system/set-key') || config.url.includes('system/time')) {
         return config;
     }
 
     // 检查会话有效性
-    if (!localStorage.getItem('session_id')) {
-        await securityHandler.initializeCommunication();
+    try {
+        console.log('正在检查session_id，请求URL:', config.url);
+        if (!localStorage.getItem('session_id')) {
+            console.log("need init")
+            await securityHandler.initializeCommunication();
+        }
+    } catch (error) {
+        console.error('localStorage访问错误:', error);
+        console.error('出错时的请求URL:', config.url);
     }
+    // 继续执行，让错误在控制台可见
 
     // 加密请求数据（仅处理POST/PUT/PATCH）
     if (config.data && ['post', 'put', 'patch'].includes(config.method)) {

@@ -41,6 +41,7 @@ class SecurityHandler {
     async initializeCommunication() {
         try {
             // 同步服务器时间
+            console.log("do sync time")
             await this.syncServerTime();
 
             // 1. 获取RSA公钥和session_id
