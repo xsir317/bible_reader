@@ -14,7 +14,7 @@ class SecurityHandler {
     // 获取服务器时间并计算时间差
     async syncServerTime() {
         try {
-            const response = await axios.get('/system/time');
+            const response = await axios.get('/common/system/time');
             const serverTime = response.data.data.time;
             const localTime = Math.floor(Date.now() / 1000);
             this.timeOffset = serverTime - localTime;
@@ -44,7 +44,7 @@ class SecurityHandler {
             await this.syncServerTime();
 
             // 1. 获取RSA公钥和session_id
-            const initResponse = await axios.get('/system/init');
+            const initResponse = await axios.get('/common/system/init');
             const { session_id: sessionId, public: publicKey } = initResponse.data;
 
             // 2. 生成AES密钥
@@ -55,7 +55,7 @@ class SecurityHandler {
             const encryptedKey = rsa.encrypt(aesKey, 'base64');
 
             // 4. 存储并发送密钥
-            await axios.get('/system/set-key', {
+            await axios.get('/common/system/set-key', {
                 params: {
                     session_id: sessionId,
                     encrypted_key: encryptedKey

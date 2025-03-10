@@ -6,7 +6,7 @@ const BASE_URL = 'http://bb.ku10.com';
 const api = {
     async request(method, url, data = null) {
         // 对于不需要加密的系统接口，直接使用 axios
-        if (url.startsWith('/system/')) {
+        if (url.startsWith('/common/system/')) {
             const response = await axios({
                 method,
                 url: `${BASE_URL}${url}`,
