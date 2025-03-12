@@ -1,6 +1,7 @@
 import CryptoJS from 'crypto-js';
 import NodeRSA from 'node-rsa';
 import axios from 'axios';
+import { BASE_URL } from '../config';
 
 // 加密处理器
 class SecurityHandler {
@@ -39,13 +40,11 @@ class SecurityHandler {
 
     // 初始化通信
     async initializeCommunication() {
+        // 校准时间
+        const timeResponse = await axios.get(`${BASE_URL}/common/system/time`);
         try {
-            // 同步服务器时间
-            console.log("do sync time")
-            await this.syncServerTime();
-
             // 1. 获取RSA公钥和session_id
-            const initResponse = await axios.get('/common/system/init');
+            const initResponse = await axios.get(`${BASE_URL}/common/system/init`);
             const { session_id: sessionId, public: publicKey } = initResponse.data;
 
             // 2. 生成AES密钥
@@ -56,7 +55,7 @@ class SecurityHandler {
             const encryptedKey = rsa.encrypt(aesKey, 'base64');
 
             // 4. 存储并发送密钥
-            await axios.get('/common/system/set-key', {
+            await axios.get(`${BASE_URL}/common/system/set-key`, {
                 params: {
                     session_id: sessionId,
                     encrypted_key: encryptedKey

@@ -1,0 +1,1 @@
+export const BASE_URL = 'http://bb.ku10.com';

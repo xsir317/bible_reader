@@ -1,27 +1,17 @@
-import axios from 'axios';
-import { securityHandler } from '../utils/security';
-
-const BASE_URL = 'http://bb.ku10.com';
+import http from '../utils/axios';
 
 const api = {
     async request(method, url, data = null) {
-        // 对于不需要加密的系统接口，直接使用 axios
-        if (url.startsWith('/common/system/')) {
-            const response = await axios({
+        try {
+            const response = await http({
                 method,
-                url: `${BASE_URL}${url}`,
+                url,
                 ...(data && { data })
             });
-            return response.data.data;
-        }
-
-        // 使用 securityHandler 处理加密请求
-        try {
-            const result = await securityHandler.request(method, `${BASE_URL}${url}`, data);
-            if (result.code !== 200) {
-                throw new Error(result.msg || '请求失败');
+            if (response.data.code !== 200) {
+                throw new Error(response.data.msg || '请求失败');
             }
-            return result.data;
+            return response.data.data;
         } catch (error) {
             throw error;
         }

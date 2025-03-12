@@ -1,9 +1,10 @@
 import axios from 'axios';
-import { securityHandler } from './security'; // 引入之前创建的security模块
+import { securityHandler } from './security';
+import { BASE_URL } from '../config';
 
-// 创建axios实例（推荐）
+// 创建axios实例
 const http = axios.create({
-    baseURL: process.env.REACT_APP_API_URL,
+    baseURL: BASE_URL,
     timeout: 10000
 });
 
