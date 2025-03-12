@@ -20,6 +20,7 @@ http.interceptors.request.use(async (config) => {
         console.log('正在检查session_id，请求URL:', config.url);
         if (!localStorage.getItem('session_id')) {
             console.log("need init")
+            await securityHandler.syncServerTime();  // 先同步时间
             await securityHandler.initializeCommunication();
         }
     } catch (error) {

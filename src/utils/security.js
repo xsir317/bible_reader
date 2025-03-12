@@ -15,7 +15,7 @@ class SecurityHandler {
     // 获取服务器时间并计算时间差
     async syncServerTime() {
         try {
-            const response = await axios.get('/common/system/time');
+            const response = await axios.get(`${BASE_URL}/common/system/time`);
             const serverTime = response.data.data.time;
             const localTime = Math.floor(Date.now() / 1000);
             this.timeOffset = serverTime - localTime;
@@ -40,12 +40,11 @@ class SecurityHandler {
 
     // 初始化通信
     async initializeCommunication() {
-        // 校准时间
-        const timeResponse = await axios.get(`${BASE_URL}/common/system/time`);
         try {
-            // 1. 获取RSA公钥和session_id
+            // 1. 直接使用原始 axios 获取RSA公钥和session_id，避免触发拦截器
             const initResponse = await axios.get(`${BASE_URL}/common/system/init`);
-            const { session_id: sessionId, public: publicKey } = initResponse.data;
+            const { session_id: sessionId, public: publicKey } = initResponse.data.data;
+            console.log('initResponseData:', initResponse.data.data);
 
             // 2. 生成AES密钥
             const aesKey = CryptoJS.lib.WordArray.random(32).toString();
@@ -53,10 +52,11 @@ class SecurityHandler {
 
             // 3. 使用RSA加密AES密钥
             const rsa = new NodeRSA();
+            console.log('RSA Public Key:', publicKey);
             rsa.importKey(publicKey, 'public');
             const encryptedKey = rsa.encrypt(Buffer.from(aesKey), 'base64');
 
-            // 4. 存储并发送密钥
+            // 4. 存储并发送密钥，使用原始 axios 避免触发拦截器
             await axios.get(`${BASE_URL}/common/system/set-key`, {
                 params: {
                     session_id: sessionId,

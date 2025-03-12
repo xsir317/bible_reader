@@ -7,14 +7,28 @@ export default function BookList() {
     const navigate = useNavigate();
 
     useEffect(() => {
-        api.get('/contents/content/books-menu')
-            .then(data => {
-                const booksArray = Object.entries(data).map(([id, book]) => ({
-                    id: parseInt(id),
-                    ...book
-                }));
-                setBooks(booksArray);
-            });
+        let isSubscribed = true;
+
+        const fetchBooks = async () => {
+            try {
+                const data = await api.get('/contents/content/books-menu');
+                if (isSubscribed) {
+                    const booksArray = Object.entries(data).map(([id, book]) => ({
+                        id: parseInt(id),
+                        ...book
+                    }));
+                    setBooks(booksArray);
+                }
+            } catch (error) {
+                console.error('获取书籍列表失败:', error);
+            }
+        };
+
+        fetchBooks();
+
+        return () => {
+            isSubscribed = false;
+        };
     }, []);
 
     return (
