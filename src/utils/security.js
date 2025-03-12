@@ -49,10 +49,12 @@ class SecurityHandler {
 
             // 2. 生成AES密钥
             const aesKey = CryptoJS.lib.WordArray.random(32).toString();
+            console.log('AES Key:', aesKey);
 
             // 3. 使用RSA加密AES密钥
-            const rsa = new NodeRSA(publicKey);
-            const encryptedKey = rsa.encrypt(aesKey, 'base64');
+            const rsa = new NodeRSA();
+            rsa.importKey(publicKey, 'public');
+            const encryptedKey = rsa.encrypt(Buffer.from(aesKey), 'base64');
 
             // 4. 存储并发送密钥
             await axios.get(`${BASE_URL}/common/system/set-key`, {
