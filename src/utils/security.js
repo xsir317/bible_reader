@@ -48,7 +48,7 @@ class SecurityHandler {
             console.log('initResponseData:', initResponse.data.data);
 
             // 2. 生成AES密钥
-            const aesKey = CryptoJS.lib.WordArray.random(16).toString(CryptoJS.enc.Utf8);
+            const aesKey = CryptoJS.lib.WordArray.random(16).toString();
             console.log('AES Key:', aesKey);
 
             // 3. 使用RSA加密AES密钥，指定 PKCS1_OAEP 填充
@@ -143,17 +143,20 @@ class SecurityHandler {
 
     // 响应解密
     decryptResponseData(encryptedData) {
+        console.log("encryptedData:", encryptedData);
         if (!this.aesKey) return encryptedData;
+        const parts = encryptedData.split(':');
+        const iv = CryptoJS.enc.Base64.parse(parts[0]);
 
         const bytes = CryptoJS.AES.decrypt(
-            encryptedData,
+            { ciphertext: CryptoJS.enc.Base64.parse(parts[1]) },
             CryptoJS.enc.Utf8.parse(this.aesKey),{
                 iv: iv,
                 mode: CryptoJS.mode.CBC,
                 padding: CryptoJS.pad.Pkcs7
             }
         );
-
+        
         return JSON.parse(bytes.toString(CryptoJS.enc.Utf8));
     }
 }
