@@ -137,19 +137,8 @@ class SecurityHandler {
             }
         );
 
-        const decrypted = CryptoJS.AES.decrypt(
-            encrypted,
-            CryptoJS.enc.Utf8.parse(this.aesKey),{
-                iv: iv,
-                mode: CryptoJS.mode.CBC,
-                padding: CryptoJS.pad.Pkcs7
-            }
-        );
-        console.log("key:" , this.aesKey);
-        console.log("encrypted:", encrypted.toString());
-        console.log("decrypted:", decrypted.toString(CryptoJS.enc.Utf8));
-        //return { encrypted_data: encrypted };
-        return encrypted.toString();
+        const ivBase64 = CryptoJS.enc.Base64.stringify(iv);
+        return ivBase64 + ':' + encrypted.toString();
     }
 
     // 响应解密
