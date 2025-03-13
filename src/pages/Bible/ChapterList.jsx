@@ -1,6 +1,6 @@
 import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import { useEffect, useState } from 'react';
-import api from '../api';
+import api from '../../api';
 
 export default function ChapterList() {
     const { bookId } = useParams();
@@ -28,9 +28,13 @@ export default function ChapterList() {
         }
     }, [book, bookId]);
 
+    const handleBack = () => {
+        navigate('/');
+    };
+
     return (
         <div className="chapter-list">
-            <button onClick={() => navigate(-1)}>返回目录</button>
+            <button onClick={handleBack}>返回目录</button>
             <h2>{book?.name}</h2>
             <div className="chapters-grid">
                 {Array.from({ length: book?.chapters || 0 }, (_, i) => i + 1).map(chapter => (

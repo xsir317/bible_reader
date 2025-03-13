@@ -1,8 +1,9 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Layout from './components/Layout';
-import BookList from './components/BookList';
-import ChapterList from './components/ChapterList';
-import ChapterContent from './components/ChapterContent';
+import BookList from './pages/Bible/index';
+import ChapterList from './pages/Bible/ChapterList';
+import ChapterContent from './pages/Bible/ChapterContent';
+import Profile from './pages/Profile';
 import './App.css';
 
 function App() {
@@ -13,6 +14,7 @@ function App() {
                     <Route index element={<BookList />} />
                     <Route path="book/:bookId" element={<ChapterList />} />
                     <Route path="book/:bookId/chapter/:chapterId" element={<ChapterContent />} />
+                    <Route path="profile" element={<Profile />} />
                 </Route>
             </Routes>
         </Router>

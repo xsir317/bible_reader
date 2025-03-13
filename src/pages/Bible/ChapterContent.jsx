@@ -1,6 +1,6 @@
 import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import { useEffect, useState } from 'react';
-import api from '../api';
+import api from '../../api';
 
 export default function ChapterContent() {
     const { bookId, chapterId } = useParams();
@@ -26,11 +26,16 @@ export default function ChapterContent() {
         }
     };
 
-    // 修改后的按钮容器部分
+    const handleBack = () => {
+        navigate(`/book/${bookId}`, {
+            state: { book: location.state?.book }
+        });
+    };
+
     return (
         <div className="chapter-content">
             <div className="chapter-controls">
-                <button onClick={() => navigate(-1)} className="back-btn">
+                <button onClick={handleBack} className="back-btn">
                     返回
                 </button>
                 <div className="chapter-nav">

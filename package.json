@@ -24,6 +24,7 @@
   },
   "dependencies": {
     "@craco/craco": "^7.1.0",
+    "antd": "^5.24.3",
     "assert": "^2.1.0",
     "axios": "^1.8.2",
     "buffer": "^6.0.3",
