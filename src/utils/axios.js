@@ -15,32 +15,36 @@ http.interceptors.request.use(async (config) => {
         return config;
     }
 
+    const session_id = localStorage.getItem('session_id');
     // 检查会话有效性
     try {
-        console.log('正在检查session_id，请求URL:', config.url);
-        if (!localStorage.getItem('session_id')) {
-            console.log("need init")
+        if (!session_id) {
             await securityHandler.syncServerTime();  // 先同步时间
             await securityHandler.initializeCommunication();
         }
+
+        // 使用 createSecureRequest 生成安全请求配置
+        const secureConfig = securityHandler.createSecureRequest(
+            config.method,
+            config.url,
+            config.data
+        );
+
+        // 合并安全配置到现有配置
+        config.headers = {
+            ...config.headers,
+            ...secureConfig.headers
+        };
+        
+        if (secureConfig.data) {
+            config.data = secureConfig.data;
+        }
+
+        return config;
     } catch (error) {
-        console.error('localStorage访问错误:', error);
-        console.error('出错时的请求URL:', config.url);
+        console.error('请求处理错误:', error);
+        return Promise.reject(error);
     }
-    // 继续执行，让错误在控制台可见
-
-    // 加密请求数据（仅处理POST/PUT/PATCH）
-    if (config.data && ['post', 'put', 'patch'].includes(config.method)) {
-        config.data = securityHandler.encryptRequestData(config.data);
-    }
-
-    // 添加session_id到URL参数
-    config.params = {
-        ...config.params,
-        session_id: localStorage.getItem('session_id')
-    };
-
-    return config;
 });
 
 // 响应拦截器

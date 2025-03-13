@@ -10,7 +10,10 @@ export default function ChapterContent() {
     const totalChapters = location.state?.totalChapters;
 
     useEffect(() => {
-        api.get(`/contents/content/chapter-content?book_id=${bookId}&chapter_id=${chapterId}`)
+        api.post('/contents/content/chapter-content', {
+            book_id: bookId,
+            chapter_id: chapterId
+        })
             .then(data => setVerses(data.verses));
     }, [bookId, chapterId]);
 

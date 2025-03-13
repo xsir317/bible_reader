@@ -10,15 +10,21 @@ export default function ChapterList() {
 
     useEffect(() => {
         if (!book) {
-            api.get('/contents/content/books-menu')
-                .then(data => {
+            const fetchBooks = async () => {
+                try {
+                    const data = await api.post('/contents/content/books-menu');
                     const booksArray = Object.entries(data).map(([id, b]) => ({
                         id: parseInt(id),
                         ...b
                     }));
                     const currentBook = booksArray.find(b => b.id === parseInt(bookId));
                     setBook(currentBook);
-                });
+                } catch (error) {
+                    console.error('获取书籍列表失败:', error);
+                }
+            };
+
+            fetchBooks();
         }
     }, [book, bookId]);
 

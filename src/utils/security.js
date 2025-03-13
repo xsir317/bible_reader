@@ -6,8 +6,8 @@ import { BASE_URL } from '../config';
 // 加密处理器
 class SecurityHandler {
     constructor() {
-        this.aesKey = null;
-        this.sessionId = null;
+        this.aesKey = localStorage.getItem('aes_key') || null;
+        this.sessionId = localStorage.getItem('session_id') || null;
         this.rsaPublicKey = null;
         this.timeOffset = 0;
     }
@@ -35,6 +35,7 @@ class SecurityHandler {
     // 计算请求校验和
     calculateChecksum(requestUri, content, timestamp) {
         const checkString = `REQUEST_URI=${requestUri}&content=${content}&timestamp=${timestamp}&secret_key=${this.aesKey}`;
+        console.log('checkString:', checkString);
         return CryptoJS.MD5(checkString).toString();
     }
 
@@ -47,12 +48,11 @@ class SecurityHandler {
             console.log('initResponseData:', initResponse.data.data);
 
             // 2. 生成AES密钥
-            const aesKey = CryptoJS.lib.WordArray.random(32).toString();
+            const aesKey = CryptoJS.lib.WordArray.random(16).toString(CryptoJS.enc.Utf8);
             console.log('AES Key:', aesKey);
 
-            // 3. 使用RSA加密AES密钥
-            const rsa = new NodeRSA();
-            console.log('RSA Public Key:', publicKey);
+            // 3. 使用RSA加密AES密钥，指定 PKCS1_OAEP 填充
+            const rsa = new NodeRSA({ encryptionScheme: 'pkcs1-oaep' });
             rsa.importKey(publicKey, 'public');
             const encryptedKey = rsa.encrypt(Buffer.from(aesKey), 'base64');
 
@@ -60,12 +60,13 @@ class SecurityHandler {
             await axios.get(`${BASE_URL}/common/system/set-key`, {
                 params: {
                     session_id: sessionId,
-                    encrypted_key: encryptedKey
+                    encrypted: encryptedKey
                 }
             });
 
             // 5. 存储本地信息
             localStorage.setItem('session_id', sessionId);
+            localStorage.setItem('aes_key', aesKey);  // 新增：保存 AES Key 到 localStorage
             this.sessionId = sessionId;
             this.aesKey = aesKey;
 
@@ -79,8 +80,13 @@ class SecurityHandler {
     // 创建加密请求配置
     createSecureRequest(method, url, data = null) {
         const timestamp = this.getCurrentTimestamp();
+        
+        // 如果是 POST 请求且 data 为空，添加时间字段
+        if (method.toLowerCase() === 'post' && !data) {
+            data = { _time: timestamp };
+        }
+        
         const requestData = data ? this.encryptRequestData(data) : null;
-        const content = requestData ? requestData.encrypted_data : '';
         
         return {
             method,
@@ -89,7 +95,7 @@ class SecurityHandler {
             headers: {
                 'x-session-id': this.sessionId,
                 'timestamp': timestamp.toString(),
-                'checksum': this.calculateChecksum(url, content, timestamp)
+                'checksum': this.calculateChecksum(url, requestData, timestamp)
             }
         };
     }
@@ -119,12 +125,31 @@ class SecurityHandler {
     encryptRequestData(data) {
         if (!this.aesKey) return data;
 
+        console.log("data json: ", JSON.stringify(data));
+        const iv = CryptoJS.lib.WordArray.random(16);
         const encrypted = CryptoJS.AES.encrypt(
             JSON.stringify(data),
-            this.aesKey
-        ).toString();
+            CryptoJS.enc.Utf8.parse(this.aesKey),
+            { 
+              iv: iv,
+              mode: CryptoJS.mode.CBC,
+              padding: CryptoJS.pad.Pkcs7
+            }
+        );
 
-        return { encrypted_data: encrypted };
+        const decrypted = CryptoJS.AES.decrypt(
+            encrypted,
+            CryptoJS.enc.Utf8.parse(this.aesKey),{
+                iv: iv,
+                mode: CryptoJS.mode.CBC,
+                padding: CryptoJS.pad.Pkcs7
+            }
+        );
+        console.log("key:" , this.aesKey);
+        console.log("encrypted:", encrypted.toString());
+        console.log("decrypted:", decrypted.toString(CryptoJS.enc.Utf8));
+        //return { encrypted_data: encrypted };
+        return encrypted.toString();
     }
 
     // 响应解密
@@ -133,7 +158,11 @@ class SecurityHandler {
 
         const bytes = CryptoJS.AES.decrypt(
             encryptedData,
-            this.aesKey
+            CryptoJS.enc.Utf8.parse(this.aesKey),{
+                iv: iv,
+                mode: CryptoJS.mode.CBC,
+                padding: CryptoJS.pad.Pkcs7
+            }
         );
 
         return JSON.parse(bytes.toString(CryptoJS.enc.Utf8));

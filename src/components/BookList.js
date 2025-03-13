@@ -11,7 +11,7 @@ export default function BookList() {
 
         const fetchBooks = async () => {
             try {
-                const data = await api.get('/contents/content/books-menu');
+                const data = await api.post('/contents/content/books-menu');
                 if (isSubscribed) {
                     const booksArray = Object.entries(data).map(([id, book]) => ({
                         id: parseInt(id),
