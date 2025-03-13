@@ -2,6 +2,7 @@ import CryptoJS from 'crypto-js';
 import NodeRSA from 'node-rsa';
 import axios from 'axios';
 import { BASE_URL } from '../config';
+import { HTTP_STATUS } from '../constants/httpStatus';
 
 // 加密处理器
 class SecurityHandler {
@@ -107,14 +108,29 @@ class SecurityHandler {
             const response = await axios(config);
             
             // 处理时间戳错误
-            if (response.status === 409) {
+            if (response.status === HTTP_STATUS.TIMESTAMP_MISMATCH) {
                 await this.syncServerTime();
                 const newConfig = this.createSecureRequest(method, url, data);
                 const retryResponse = await axios(newConfig);
                 return this.decryptResponseData(retryResponse.data);
             }
 
-            return this.decryptResponseData(response.data);
+            try {
+                return this.decryptResponseData(response.data);
+            } catch (error) {
+                if (error.message === 'COMMUNICATION_KEY_EXPIRED') {
+                    // 重新初始化通信
+                    const initialized = await this.initializeCommunication();
+                    if (!initialized) {
+                        throw new Error('Failed to re-initialize communication');
+                    }
+                    // 重试请求
+                    const retryConfig = this.createSecureRequest(method, url, data);
+                    const retryResponse = await axios(retryConfig);
+                    return this.decryptResponseData(retryResponse.data);
+                }
+                throw error;
+            }
         } catch (error) {
             console.error('请求失败:', error);
             throw error;
@@ -145,19 +161,44 @@ class SecurityHandler {
     decryptResponseData(encryptedData) {
         console.log("encryptedData:", encryptedData);
         if (!this.aesKey) return encryptedData;
-        const parts = encryptedData.split(':');
-        const iv = CryptoJS.enc.Base64.parse(parts[0]);
-
-        const bytes = CryptoJS.AES.decrypt(
-            { ciphertext: CryptoJS.enc.Base64.parse(parts[1]) },
-            CryptoJS.enc.Utf8.parse(this.aesKey),{
-                iv: iv,
-                mode: CryptoJS.mode.CBC,
-                padding: CryptoJS.pad.Pkcs7
-            }
-        );
         
-        return JSON.parse(bytes.toString(CryptoJS.enc.Utf8));
+        try {
+            // 验证数据格式
+            const parts = encryptedData.split(':');
+            if (parts.length !== 2) {
+                throw new Error('Invalid encrypted data format');
+            }
+
+            // 验证 IV 长度
+            const iv = CryptoJS.enc.Base64.parse(parts[0]);
+            if (iv.words.length !== 4) { // 16 bytes = 4 words
+                throw new Error('Invalid IV length');
+            }
+
+            const bytes = CryptoJS.AES.decrypt(
+                { ciphertext: CryptoJS.enc.Base64.parse(parts[1]) },
+                CryptoJS.enc.Utf8.parse(this.aesKey),
+                {
+                    iv: iv,
+                    mode: CryptoJS.mode.CBC,
+                    padding: CryptoJS.pad.Pkcs7
+                }
+            );
+            
+            const decrypted = bytes.toString(CryptoJS.enc.Utf8);
+            if (!decrypted) {
+                throw new Error('Decryption failed - possible key mismatch');
+            }
+            
+            return JSON.parse(decrypted);
+        } catch (error) {
+            if (error.message === 'Decryption failed - possible key mismatch') {
+                // 通信密钥可能失效
+                throw new Error('COMMUNICATION_KEY_EXPIRED');
+            }
+            console.error('Decryption error:', error);
+            throw new Error('DECRYPTION_FAILED');
+        }
     }
 }
 

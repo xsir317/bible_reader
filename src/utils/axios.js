@@ -1,6 +1,7 @@
 import axios from 'axios';
 import { securityHandler } from './security';
 import { BASE_URL } from '../config';
+import { HTTP_STATUS } from '../constants/httpStatus';
 
 // 创建axios实例
 const http = axios.create({
@@ -60,7 +61,7 @@ http.interceptors.response.use(
     },
     async (error) => {
         // 处理408会话过期
-        if (error.response?.data?.code === 408) {
+        if (error.response?.data?.code === HTTP_STATUS.REQUEST_TIMEOUT) {
             localStorage.removeItem('session_id');
             // 自动重试原请求
             return http(error.config);
