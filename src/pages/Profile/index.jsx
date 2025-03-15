@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button, Input, message } from 'antd';
+import api from '../../api';
 import './index.css';
 
 const Profile = () => {
@@ -22,17 +23,27 @@ const Profile = () => {
       message.error('请输入邮箱地址');
       return;
     }
-    // TODO: 调用发送验证码接口
-    setCountdown(60);
-    const timer = setInterval(() => {
-      setCountdown((prev) => {
-        if (prev <= 1) {
-          clearInterval(timer);
-          return 0;
-        }
-        return prev - 1;
+    
+    try {
+      const response = await api.post('/user/identity/send-email', {
+        email,
+        type: 'login'
       });
-    }, 1000);
+      
+      message.success(response.msg || '验证码发送成功');
+      setCountdown(60);
+      const timer = setInterval(() => {
+        setCountdown((prev) => {
+          if (prev <= 1) {
+            clearInterval(timer);
+            return 0;
+          }
+          return prev - 1;
+        });
+      }, 1000);
+    } catch (error) {
+      message.error(error.message || '发送验证码失败');
+    }
   };
 
   const handleLogin = async () => {
@@ -40,7 +51,21 @@ const Profile = () => {
       message.error('请输入邮箱和验证码');
       return;
     }
-    // TODO: 调用登录接口
+
+    try {
+      const response = await api.post('/user/identity/email-login', {
+        email,
+        code: verificationCode,
+        inviter: ''  // 预留的邀请者字段
+      });
+
+      const { id } = response.user;
+      localStorage.setItem('userId', id);
+      setIsLoggedIn(true);
+      message.success('登录成功');
+    } catch (error) {
+      message.error(error.message || '登录失败');
+    }
   };
 
   if (isLoggedIn) {

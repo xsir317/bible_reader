@@ -61,7 +61,7 @@ http.interceptors.response.use(
     },
     async (error) => {
         // 处理408会话过期
-        if (error.response?.data?.code === HTTP_STATUS.REQUEST_TIMEOUT) {
+        if (error.response?.data?.code === HTTP_STATUS.SESSION_EXPIRED) {
             localStorage.removeItem('session_id');
             // 自动重试原请求
             return http(error.config);
