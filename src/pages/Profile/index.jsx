@@ -1,11 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Button, Input, message } from 'antd';
+import { ToastContainer, toast } from 'react-toastify';
+import { FaEdit, FaBookmark, FaHistory, FaStar, FaPen, FaGift, FaBug, FaShare, FaCog } from 'react-icons/fa';
 import api from '../../api';
+import 'react-toastify/dist/ReactToastify.css';
 import './index.css';
 
 const Profile = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [userInfo, setUserInfo] = useState(null);
   const [email, setEmail] = useState('');
   const [verificationCode, setVerificationCode] = useState('');
   const [countdown, setCountdown] = useState(0);
@@ -15,12 +18,22 @@ const Profile = () => {
     const userId = localStorage.getItem('userId');
     if (userId) {
       setIsLoggedIn(true);
+      fetchUserInfo();
     }
   }, []);
 
+  const fetchUserInfo = async () => {
+    try {
+      const response = await api.get('/user/summary/info');
+      setUserInfo(response.detail);
+    } catch (error) {
+      toast.error('获取用户信息失败');
+    }
+  };
+
   const handleSendCode = async () => {
     if (!email) {
-      message.error('请输入邮箱地址');
+      toast.error('请输入邮箱地址');
       return;
     }
     
@@ -30,7 +43,7 @@ const Profile = () => {
         type: 'login'
       });
       
-      message.success(response.msg || '验证码发送成功');
+      toast.success(response.msg || '验证码发送成功');
       setCountdown(60);
       const timer = setInterval(() => {
         setCountdown((prev) => {
@@ -42,68 +55,127 @@ const Profile = () => {
         });
       }, 1000);
     } catch (error) {
-      message.error(error.message || '发送验证码失败');
+      toast.error(error.message || '发送验证码失败');
     }
   };
 
   const handleLogin = async () => {
     if (!email || !verificationCode) {
-      message.error('请输入邮箱和验证码');
+      toast.error('请输入邮箱和验证码');
       return;
     }
 
     try {
       const response = await api.post('/user/identity/email-login', {
-        email,
+        email: email,
         code: verificationCode,
-        inviter: ''  // 预留的邀请者字段
+        inviter: ''
       });
 
-      const { id } = response.user;
-      localStorage.setItem('userId', id);
+      console.log(response);
+      localStorage.setItem('userId', response.user.id);
       setIsLoggedIn(true);
-      message.success('登录成功');
+      toast.success('登录成功');
     } catch (error) {
-      message.error(error.message || '登录失败');
+      toast.error(error.message || '登录失败');
     }
   };
 
-  if (isLoggedIn) {
-    // TODO: 实现已登录状态的界面
-    return null;
+  if (isLoggedIn && userInfo) {
+    return (
+      <div className="profile-container">
+        <ToastContainer position="top-center" />
+        <div className="user-info-section">
+          <div className="user-basic-info">
+            <img src={userInfo.avatar || '/default-avatar.png'} alt="用户头像" className="user-avatar" />
+            <div className="user-name">
+              <span>{userInfo.nickname || '未设置昵称'}</span>
+              <FaEdit className="edit-icon" onClick={() => navigate('/profile/edit')} />
+            </div>
+          </div>
+          <div className="right-section">
+            {/* 预留右侧空间 */}
+          </div>
+        </div>
+
+        <div className="feature-icons">
+          <div className="feature-item" onClick={() => navigate('/bookmarks')}>
+            <FaBookmark />
+            <span>我的书签</span>
+          </div>
+          <div className="feature-item" onClick={() => navigate('/reading-history')}>
+            <FaHistory />
+            <span>阅读记录</span>
+          </div>
+          <div className="feature-item" onClick={() => navigate('/favorites')}>
+            <FaStar />
+            <span>我的收藏</span>
+          </div>
+          <div className="feature-item" onClick={() => navigate('/notes')}>
+            <FaPen />
+            <span>我的笔记</span>
+          </div>
+        </div>
+
+        <div className="menu-list">
+          <div className="menu-item" onClick={() => navigate('/donate')}>
+            <FaGift />
+            <span>奉献支持</span>
+          </div>
+          <div className="menu-item" onClick={() => navigate('/feedback')}>
+            <FaBug />
+            <span>反馈问题</span>
+          </div>
+          <div className="menu-item" onClick={() => navigate('/share')}>
+            <FaShare />
+            <span>推荐给好友</span>
+          </div>
+          <div className="menu-item" onClick={() => navigate('/settings')}>
+            <FaCog />
+            <span>设置和其他</span>
+          </div>
+        </div>
+      </div>
+    );
   }
 
   return (
     <div className="profile-container">
+      <ToastContainer position="top-center" />
       <div className="login-form">
         <h2>登录</h2>
         <div className="form-item">
-          <Input
+          <input
+            type="email"
+            className="form-input"
             placeholder="请输入邮箱"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
           />
         </div>
         <div className="form-item verification-code">
-          <Input
+          <input
+            type="text"
+            className="form-input"
             placeholder="请输入验证码"
             value={verificationCode}
             onChange={(e) => setVerificationCode(e.target.value)}
           />
-          <Button
+          <button
+            className="send-code-btn"
             disabled={countdown > 0}
             onClick={handleSendCode}
           >
             {countdown > 0 ? `${countdown}秒后重试` : '发送验证码'}
-          </Button>
+          </button>
         </div>
-        <Button type="primary" block onClick={handleLogin}>
+        <button className="login-btn" onClick={handleLogin}>
           登录
-        </Button>
+        </button>
         <div className="other-login">
-          <Button disabled type="link">
+          <button className="facebook-btn" disabled>
             使用 Facebook 登录
-          </Button>
+          </button>
         </div>
       </div>
     </div>
