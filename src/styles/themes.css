@@ -1,0 +1,51 @@
+:root {
+  --transition-speed: 0.3s;
+}
+
+.theme-brown-light {
+  --bg-primary: #f5f0eb;
+  --bg-secondary: #e8e0d8;
+  --text-primary: #2c1810;
+  --text-secondary: #5a4a42;
+  --border-color: #d1c3b6;
+  --verses-text: #2c1810;
+  --feature-bg: #e8e0d8;
+}
+
+.theme-green-light {
+  --bg-primary: #f0f7f0;
+  --bg-secondary: #e6efe6;
+  --text-primary: #1a331a;
+  --text-secondary: #426142;
+  --border-color: #c1d6c1;
+  --verses-text: #1a331a;
+  --feature-bg: #e6efe6;
+}
+
+.theme-dark {
+  --bg-primary: #1a1a1a;
+  --bg-secondary: #2d2d2d;
+  --text-primary: #ffffff;
+  --text-secondary: #b3b3b3;
+  --border-color: #404040;
+  --verses-text: #e6e6e6;
+  --feature-bg: #2d2d2d;
+}
+
+body {
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  transition: background-color var(--transition-speed), color var(--transition-speed);
+}
+
+.verses {
+  color: var(--verses-text);
+}
+
+.feature-icons  , .user-info-section {
+  background-color: var(--feature-bg);
+}
+
+.feature-icons .feature-item {
+  color: var(--text-primary);
+}

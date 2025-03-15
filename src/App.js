@@ -4,6 +4,7 @@ import BookList from './pages/Bible/index';
 import ChapterList from './pages/Bible/ChapterList';
 import ChapterContent from './pages/Bible/ChapterContent';
 import Profile from './pages/Profile';
+import Settings from './pages/Settings';
 import './App.css';
 
 function App() {
@@ -15,6 +16,10 @@ function App() {
                     <Route path="book/:bookId" element={<ChapterList />} />
                     <Route path="book/:bookId/chapter/:chapterId" element={<ChapterContent />} />
                     <Route path="profile" element={<Profile />} />
+                    <Route path="settings" element={<Settings />} />
+                    <Route path="about" element={<div>关于我们</div>} />
+                    <Route path="terms" element={<div>使用条款</div>} />
+                    <Route path="privacy" element={<div>隐私政策</div>} />
                 </Route>
             </Routes>
         </Router>
