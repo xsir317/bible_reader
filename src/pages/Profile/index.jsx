@@ -9,6 +9,7 @@ import './index.css';
 const Profile = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [userInfo, setUserInfo] = useState(null);
+  const [checkinInfo, setCheckinInfo] = useState(null);
   const [email, setEmail] = useState('');
   const [verificationCode, setVerificationCode] = useState('');
   const [countdown, setCountdown] = useState(0);
@@ -26,8 +27,33 @@ const Profile = () => {
     try {
       const response = await api.get('/user/summary/info');
       setUserInfo(response.detail);
+      setCheckinInfo(response.checkin_info);
     } catch (error) {
       toast.error('获取用户信息失败');
+    }
+  };
+
+  const handleCheckIn = async () => {
+    try {
+      const response = await api.post('/user/check-in/today');
+      setCheckinInfo(response.checkin_info);
+      toast.success('签到成功！');
+    } catch (error) {
+      toast.error(error.message || '签到失败');
+    }
+  };
+
+  const handleFillUpCheckIn = async () => {
+    const confirmMessage = `你补签的日期是${checkinInfo.fill_up_check_in_date}，补签后总天数${checkinInfo.fill_up_check_in_count}`;
+    
+    if (window.confirm(confirmMessage)) {
+      try {
+        const response = await api.post('/user/check-in/fill-up');
+        setCheckinInfo(response.checkin_info);
+        toast.success('补签成功');
+      } catch (error) {
+        toast.error(error.message || '补签失败');
+      }
     }
   };
 
@@ -72,9 +98,9 @@ const Profile = () => {
         inviter: ''
       });
 
-      console.log(response);
       localStorage.setItem('userId', response.user.id);
       setIsLoggedIn(true);
+      await fetchUserInfo(); // 添加这行：立即获取用户信息
       toast.success('登录成功');
     } catch (error) {
       toast.error(error.message || '登录失败');
@@ -94,14 +120,33 @@ const Profile = () => {
             </div>
           </div>
           <div className="right-section">
-            {/* 预留右侧空间 */}
+            {checkinInfo && (
+              <div className="checkin-container">
+                {!checkinInfo.today_checked ? (
+                  <button className="checkin-btn" onClick={handleCheckIn}>
+                    签到
+                  </button>
+                ) : (
+                  <div className="checked-info">
+                    <span>已签到{checkinInfo.check_in_days}天</span>
+                    <button 
+                      className="fillup-btn" 
+                      onClick={handleFillUpCheckIn}
+                      title={`补签日期为${checkinInfo.fill_up_check_in_date}，补签后签到天数为${checkinInfo.fill_up_check_in_count}天`}
+                    >
+                      补签
+                    </button>
+                  </div>
+                )}
+              </div>
+            )}
           </div>
         </div>
 
         <div className="feature-icons">
           <div className="feature-item" onClick={() => navigate('/bookmarks')}>
             <FaBookmark />
-            <span>我的书签</span>
+            <span>书签</span>
           </div>
           <div className="feature-item" onClick={() => navigate('/reading-history')}>
             <FaHistory />
@@ -109,11 +154,11 @@ const Profile = () => {
           </div>
           <div className="feature-item" onClick={() => navigate('/favorites')}>
             <FaStar />
-            <span>我的收藏</span>
+            <span>收藏</span>
           </div>
           <div className="feature-item" onClick={() => navigate('/notes')}>
             <FaPen />
-            <span>我的笔记</span>
+            <span>笔记</span>
           </div>
         </div>
 

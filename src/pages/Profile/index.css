@@ -159,3 +159,49 @@
   background: #9DB3D9;
   cursor: not-allowed;
 }
+
+
+.checkin-container {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.checkin-btn {
+  padding: 8px 16px;
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.checkin-btn:hover {
+  background-color: #45a049;
+}
+
+.checked-info {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.checked-info span {
+  color: #4CAF50;
+  font-weight: bold;
+}
+
+.fillup-btn {
+  padding: 4px 8px;
+  background-color: #ff9800;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 12px;
+}
+
+.fillup-btn:hover {
+  background-color: #f57c00;
+}
