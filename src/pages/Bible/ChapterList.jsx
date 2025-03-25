@@ -1,12 +1,14 @@
 import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import api from '../../api';
+import './ChapterList.css';
 
 export default function ChapterList() {
     const { bookId } = useParams();
     const location = useLocation();
     const navigate = useNavigate();
     const [book, setBook] = useState(location.state?.book);
+    const [readHistory, setReadHistory] = useState(null);
 
     useEffect(() => {
         if (!book) {
@@ -26,10 +28,39 @@ export default function ChapterList() {
 
             fetchBooks();
         }
+
+        // 获取阅读历史
+        const fetchReadHistory = async () => {
+            try {
+                const data = await api.post('/contents/content/chapters-read', {
+                    book_id: parseInt(bookId)
+                });
+                if (data.history) {
+                    setReadHistory(data.history);
+                }
+            } catch (error) {
+                console.error('获取阅读历史失败:', error);
+            }
+        };
+
+        fetchReadHistory();
     }, [book, bookId]);
 
     const handleBack = () => {
         navigate('/');
+    };
+
+    const getChapterClassName = (chapter) => {
+        if (!readHistory) return 'chapter-btn';
+        
+        const classes = ['chapter-btn'];
+        if (readHistory.chapter_map[chapter]) {
+            classes.push('read');
+        }
+        if (readHistory.last_chapter_id === chapter) {
+            classes.push('last-read');
+        }
+        return classes.join(' ');
     };
 
     return (
@@ -40,7 +71,7 @@ export default function ChapterList() {
                 {Array.from({ length: book?.chapters || 0 }, (_, i) => i + 1).map(chapter => (
                     <button
                         key={chapter}
-                        className="chapter-btn"
+                        className={getChapterClassName(chapter)}
                         onClick={() => navigate(`/book/${bookId}/chapter/${chapter}`, {
                             state: { totalChapters: book?.chapters }
                         })}

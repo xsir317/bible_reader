@@ -1,0 +1,9 @@
+.chapter-btn.read {
+    background-color: #e0e0e0;
+    color: #666;
+}
+
+.chapter-btn.last-read {
+    background-color: #4CAF50;
+    color: white;
+}
