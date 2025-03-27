@@ -27,6 +27,7 @@ export default function ChapterContent() {
                 setNotes(data.notes || {});
                 setCollectVerses(data.collect_verses || []);
                 setActiveExplain(null);
+                console.log(data);
             });
     }, [bookId, chapterId]);
 
@@ -224,7 +225,7 @@ export default function ChapterContent() {
                     </button>
                     {notes[selectedVerse?.verse_num] && (
                         <div className="existing-note">
-                            {notes[selectedVerse.verse_num]}
+                            {notes[selectedVerse.verse_num]?.text}
                         </div>
                     )}
                 </div>
