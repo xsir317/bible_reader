@@ -27,3 +27,18 @@
     border-left: 4px solid #2196f3;
     border-radius: 4px;
 }
+
+.collected {
+    text-decoration: underline;
+    text-decoration-color: #666;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 3px;
+}
+
+.note-indicator {
+    display: inline-block;
+    color: #ff4d4f;
+    margin-left: 4px;
+    font-size: 16px;
+    line-height: 1;
+}

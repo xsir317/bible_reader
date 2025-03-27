@@ -10,6 +10,9 @@ export default function ChapterContent() {
     const [verses, setVerses] = useState([]);
     const [explains, setExplains] = useState([]);
     const [activeExplain, setActiveExplain] = useState(null);
+    // 新增状态
+    const [notes, setNotes] = useState({});
+    const [collectVerses, setCollectVerses] = useState([]);
     const totalChapters = location.state?.totalChapters;
 
     useEffect(() => {
@@ -20,6 +23,8 @@ export default function ChapterContent() {
             .then(data => {
                 setVerses(data.verses);
                 setExplains(data.explains || []);
+                setNotes(data.notes || {});
+                setCollectVerses(data.collect_verses || []);
                 setActiveExplain(null);
             });
     }, [bookId, chapterId]);
@@ -28,13 +33,6 @@ export default function ChapterContent() {
         return explains.find(exp => 
             verseNum >= exp.start_verse && verseNum <= exp.end_verse
         );
-    };
-
-    const handleVerseClick = (verseNum) => {
-        const explain = getExplainForVerse(verseNum);
-        if (explain) {
-            setActiveExplain(activeExplain?.start_verse === explain.start_verse ? null : explain);
-        }
     };
 
     const handleChapterChange = (delta) => {
@@ -121,11 +119,21 @@ export default function ChapterContent() {
                                 className={`verse-group ${group.explain ? 'has-explain' : ''} ${isActive ? 'active' : ''}`}
                                 style={{ cursor: group.explain ? 'pointer' : 'default' }}
                             >
-                                {group.verses.map(verse => (
-                                    <p key={verse.verse_num}>
-                                        <sup>{verse.verse_num}</sup> {verse.content}
-                                    </p>
-                                ))}
+                                {group.verses.map(verse => {
+                                    const hasNote = notes[verse.verse_num];
+                                    const isCollected = collectVerses.includes(verse.verse_num);
+                                    
+                                    return (
+                                        <p 
+                                            key={verse.verse_num}
+                                            className={`${isCollected ? 'collected' : ''}`}
+                                        >
+                                            <sup>{verse.verse_num}</sup> 
+                                            {verse.content}
+                                            {hasNote && <span className="note-indicator">•</span>}
+                                        </p>
+                                    );
+                                })}
                             </div>
                             {isActive && (
                                 <div className="verse-explain">
