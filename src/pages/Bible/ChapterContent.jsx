@@ -2,6 +2,7 @@ import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import api from '../../api';
 import './ChapterContent.css';
+import { Popover, IconButton } from '@mui/material';
 
 export default function ChapterContent() {
     const { bookId, chapterId } = useParams();
@@ -83,6 +84,46 @@ export default function ChapterContent() {
         return groups;
     };
 
+    // 新增 state 用于控制 Popover
+    const [anchorEl, setAnchorEl] = useState(null);
+    const [selectedVerse, setSelectedVerse] = useState(null);
+    const [longPressTimer, setLongPressTimer] = useState(null);
+
+    // 处理长按开始
+    const handlePressStart = (event, verse) => {
+        event.preventDefault(); // 防止默认行为
+        const timer = setTimeout(() => {
+            handleVerseAction(event, verse);
+        }, 500); // 500ms 长按阈值
+        setLongPressTimer(timer);
+    };
+
+    // 处理长按结束
+    const handlePressEnd = () => {
+        if (longPressTimer) {
+            clearTimeout(longPressTimer);
+            setLongPressTimer(null);
+        }
+    };
+
+    // 处理右键菜单
+    const handleContextMenu = (event, verse) => {
+        event.preventDefault();
+        handleVerseAction(event, verse);
+    };
+
+    // 处理经文操作
+    const handleVerseAction = (event, verse) => {
+        setSelectedVerse(verse);
+        setAnchorEl(event.currentTarget);
+    };
+
+    // 关闭 Popover
+    const handleClose = () => {
+        setAnchorEl(null);
+        setSelectedVerse(null);
+    };
+
     return (
         <div className="chapter-content">
             <div className="chapter-controls">
@@ -127,6 +168,12 @@ export default function ChapterContent() {
                                         <p 
                                             key={verse.verse_num}
                                             className={`${isCollected ? 'collected' : ''}`}
+                                            onMouseDown={(e) => handlePressStart(e, verse)}
+                                            onMouseUp={handlePressEnd}
+                                            onMouseLeave={handlePressEnd}
+                                            onTouchStart={(e) => handlePressStart(e, verse)}
+                                            onTouchEnd={handlePressEnd}
+                                            onContextMenu={(e) => handleContextMenu(e, verse)}
                                         >
                                             <sup>{verse.verse_num}</sup> 
                                             {verse.content}
@@ -144,6 +191,44 @@ export default function ChapterContent() {
                     );
                 })}
             </div>
+
+            <Popover
+                open={Boolean(anchorEl)}
+                anchorEl={anchorEl}
+                onClose={handleClose}
+                anchorOrigin={{
+                    vertical: 'bottom',
+                    horizontal: 'center',
+                }}
+                transformOrigin={{
+                    vertical: 'top',
+                    horizontal: 'center',
+                }}
+            >
+                <div className="verse-actions">
+                    <button 
+                        onClick={() => {
+                            // TODO: 实现收藏/取消收藏功能
+                            handleClose();
+                        }}
+                    >
+                        {collectVerses.includes(selectedVerse?.verse_num) ? '取消收藏' : '收藏'}
+                    </button>
+                    <button 
+                        onClick={() => {
+                            // TODO: 实现笔记功能
+                            handleClose();
+                        }}
+                    >
+                        {notes[selectedVerse?.verse_num] ? '编辑笔记' : '添加笔记'}
+                    </button>
+                    {notes[selectedVerse?.verse_num] && (
+                        <div className="existing-note">
+                            {notes[selectedVerse.verse_num]}
+                        </div>
+                    )}
+                </div>
+            </Popover>
         </div>
     );
 }
