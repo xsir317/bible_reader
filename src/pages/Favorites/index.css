@@ -1,0 +1,74 @@
+.favorites-container {
+  padding: 16px;
+}
+
+.favorites-container h2 {
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.favorites-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.favorite-item {
+  background: #fff;
+  border-radius: 8px;
+  padding: 16px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  cursor: pointer;
+  transition: transform 0.2s;
+}
+
+.favorite-item:hover {
+  transform: translateY(-2px);
+}
+
+.favorite-header {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 8px;
+  color: #666;
+  font-size: 14px;
+}
+
+.book-name {
+  font-weight: bold;
+}
+
+.favorite-content {
+  margin: 12px 0;
+  line-height: 1.5;
+}
+
+.favorite-time {
+  font-size: 12px;
+  color: #999;
+  text-align: right;
+}
+
+.loading {
+  text-align: center;
+  padding: 20px;
+  color: #666;
+}
+
+.load-more {
+  text-align: center;
+  margin-top: 20px;
+}
+
+.load-more button {
+  background: #4a90e2;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.load-more button:hover {
+  background: #357abd;
+}
