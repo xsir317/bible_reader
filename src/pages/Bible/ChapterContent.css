@@ -75,3 +75,28 @@
     line-height: 1.5;
     border-left: 3px solid #666;
 }
+
+.note-edit-area {
+    padding: 10px;
+}
+
+.note-edit-area textarea {
+    width: 100%;
+    min-width: 250px;
+    padding: 8px;
+    margin-bottom: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}
+
+.note-actions {
+    display: flex;
+    gap: 10px;
+    justify-content: flex-end;
+}
+
+.note-actions button {
+    padding: 5px 15px;
+    border-radius: 4px;
+    cursor: pointer;
+}

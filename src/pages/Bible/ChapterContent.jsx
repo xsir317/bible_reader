@@ -15,6 +15,8 @@ export default function ChapterContent() {
     const [notes, setNotes] = useState({});
     const [collectVerses, setCollectVerses] = useState([]);
     const totalChapters = location.state?.totalChapters;
+    const [isEditing, setIsEditing] = useState(false);
+    const [noteText, setNoteText] = useState('');
 
     useEffect(() => {
         api.post('/contents/content/chapter-content', {
@@ -152,6 +154,38 @@ export default function ChapterContent() {
         }
         handleClose();
     };
+    const handleNoteEdit = () => {
+        if (selectedVerse) {
+            setNoteText(notes[selectedVerse.verse_num]?.text || '');
+            setIsEditing(true);
+        }
+    };
+
+    const handleNoteSave = async () => {
+        if (!selectedVerse) return;
+        
+        try {
+            await api.post('/contents/notes/save', {
+                book_id: bookId,
+                chapter_num: chapterId,
+                verse_num: selectedVerse.verse_num,
+                content: {
+                    text: noteText
+                }
+            });
+
+            // 更新本地笔记状态
+            setNotes(prev => ({
+                ...prev,
+                [selectedVerse.verse_num]: { text: noteText }
+            }));
+
+            setIsEditing(false);
+            handleClose();
+        } catch (error) {
+            console.error('保存笔记失败:', error);
+        }
+    };
 
     return (
         <div className="chapter-content">
@@ -241,15 +275,25 @@ export default function ChapterContent() {
                     >
                         {collectVerses.includes(selectedVerse?.verse_num) ? '取消收藏' : '收藏'}
                     </button>
-                    <button 
-                        onClick={() => {
-                            // TODO: 实现笔记功能
-                            handleClose();
-                        }}
-                    >
-                        {notes[selectedVerse?.verse_num] ? '编辑笔记' : '添加笔记'}
-                    </button>
-                    {notes[selectedVerse?.verse_num] && (
+                    {!isEditing ? (
+                        <button onClick={handleNoteEdit}>
+                            {notes[selectedVerse?.verse_num] ? '编辑笔记' : '添加笔记'}
+                        </button>
+                    ) : (
+                        <div className="note-edit-area">
+                            <textarea
+                                value={noteText}
+                                onChange={(e) => setNoteText(e.target.value)}
+                                placeholder="请输入笔记内容..."
+                                rows={4}
+                            />
+                            <div className="note-actions">
+                                <button onClick={handleNoteSave}>确定</button>
+                                <button onClick={() => setIsEditing(false)}>取消</button>
+                            </div>
+                        </div>
+                    )}
+                    {!isEditing && notes[selectedVerse?.verse_num] && (
                         <div className="existing-note">
                             {notes[selectedVerse.verse_num]?.text}
                         </div>
