@@ -125,6 +125,34 @@ export default function ChapterContent() {
         setSelectedVerse(null);
     };
 
+    // 处理收藏/取消收藏
+    const handleCollect = async () => {
+        if (!selectedVerse) return;
+        
+        try {
+            if (collectVerses.includes(selectedVerse.verse_num)) {
+                // 取消收藏
+                await api.post('/contents/collects/delete', {
+                    book_id: bookId,
+                    chapter: chapterId,
+                    verse: selectedVerse.verse_num
+                });
+                setCollectVerses(prev => prev.filter(v => v !== selectedVerse.verse_num));
+            } else {
+                // 添加收藏
+                await api.post('/contents/collects/add', {
+                    book_id: bookId,
+                    chapter: chapterId,
+                    verse: selectedVerse.verse_num
+                });
+                setCollectVerses(prev => [...prev, selectedVerse.verse_num]);
+            }
+        } catch (error) {
+            console.error('收藏操作失败:', error);
+        }
+        handleClose();
+    };
+
     return (
         <div className="chapter-content">
             <div className="chapter-controls">
@@ -207,11 +235,9 @@ export default function ChapterContent() {
                 }}
             >
                 <div className="verse-actions">
+                    // 在 Popover 中修改收藏按钮的 onClick 处理
                     <button 
-                        onClick={() => {
-                            // TODO: 实现收藏/取消收藏功能
-                            handleClose();
-                        }}
+                        onClick={handleCollect}
                     >
                         {collectVerses.includes(selectedVerse?.verse_num) ? '取消收藏' : '收藏'}
                     </button>
