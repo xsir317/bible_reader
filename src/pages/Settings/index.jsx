@@ -5,21 +5,17 @@ import { FaArrowLeft, FaPalette, FaInfoCircle, FaFileAlt, FaShieldAlt, FaSignOut
 import 'react-toastify/dist/ReactToastify.css';
 import '../../styles/themes.css';
 import './index.css';
+import { getTheme, setTheme, getAllThemes, themes } from '../../utils/themeManager';
 
 const Settings = () => {
   const navigate = useNavigate();
-  const [currentTheme, setCurrentTheme] = useState('brown-light');
-
-  useEffect(() => {
-    const savedTheme = localStorage.getItem('theme') || 'brown-light';
-    setCurrentTheme(savedTheme);
-    document.body.className = `theme-${savedTheme}`;
-  }, []);
+  const [currentTheme, setCurrentTheme] = useState(getTheme());
+  const availableThemes = getAllThemes();
 
   const handleThemeChange = (theme) => {
-    setCurrentTheme(theme);
-    localStorage.setItem('theme', theme);
-    document.body.className = `theme-${theme}`;
+    if (setTheme(theme)) {
+      setCurrentTheme(theme);
+    }
   };
 
   const menuItems = [
@@ -43,27 +39,16 @@ const Settings = () => {
           <h3>主题设置</h3>
         </div>
         <div className="theme-options">
-          <div
-            className={`theme-option ${currentTheme === 'brown-light' ? 'active' : ''}`}
-            onClick={() => handleThemeChange('brown-light')}
-          >
-            <div className="theme-preview brown-light"></div>
-            <span>温暖棕</span>
-          </div>
-          <div
-            className={`theme-option ${currentTheme === 'green-light' ? 'active' : ''}`}
-            onClick={() => handleThemeChange('green-light')}
-          >
-            <div className="theme-preview green-light"></div>
-            <span>清新绿</span>
-          </div>
-          <div
-            className={`theme-option ${currentTheme === 'dark' ? 'active' : ''}`}
-            onClick={() => handleThemeChange('dark')}
-          >
-            <div className="theme-preview dark"></div>
-            <span>深色模式</span>
-          </div>
+          {availableThemes.map(theme => (
+            <div
+              key={theme.id}
+              className={`theme-option ${currentTheme === theme.id ? 'active' : ''}`}
+              onClick={() => handleThemeChange(theme.id)}
+            >
+              <div className={`theme-preview ${theme.id}`}></div>
+              <span>{theme.name}</span>
+            </div>
+          ))}
         </div>
       </div>
 

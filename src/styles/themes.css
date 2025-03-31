@@ -2,6 +2,44 @@
   --transition-speed: 0.3s;
 }
 
+/* 确保这个文件包含所有主题的样式 */
+.theme-brown-light {
+  --primary-color: #8B4513;
+  --secondary-color: #D2B48C;
+  --background-color: #FFF8DC;
+  --text-color: #333;
+  /* 其他颜色变量 */
+}
+
+.theme-green-light {
+  --primary-color: #2E8B57;
+  --secondary-color: #98FB98;
+  --background-color: #F0FFF0;
+  --text-color: #333;
+  /* 其他颜色变量 */
+}
+
+.theme-dark {
+  --primary-color: #4682B4;
+  --secondary-color: #708090;
+  --background-color: #1E1E1E;
+  --text-color: #F5F5F5;
+  /* 其他颜色变量 */
+}
+
+/* 主题预览样式 */
+.theme-preview.brown-light {
+  background-color: #8B4513;
+}
+
+.theme-preview.green-light {
+  background-color: #2E8B57;
+}
+
+.theme-preview.dark {
+  background-color: #4682B4;
+}
+
 .theme-brown-light {
   --bg-primary: #f5f0eb;
   --bg-secondary: #e8e0d8;
