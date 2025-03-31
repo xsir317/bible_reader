@@ -1,0 +1,73 @@
+.notes-container {
+  padding: 16px;
+}
+
+.notes-list {
+  margin-top: 16px;
+}
+
+.note-item {
+  background: #fff;
+  border-radius: 8px;
+  padding: 12px;
+  margin-bottom: 12px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  cursor: pointer;
+}
+
+.note-item:hover {
+  background: #f5f5f5;
+}
+
+.note-header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 8px;
+  font-size: 14px;
+  color: #666;
+}
+
+.book-name {
+  font-weight: 500;
+  margin-right: 8px;
+}
+
+.chapter-verse {
+  margin-right: 8px;
+}
+
+.note-time {
+  margin-left: auto;
+  font-size: 12px;
+  color: #999;
+}
+
+.note-content {
+  font-size: 15px;
+  line-height: 1.5;
+  color: #333;
+}
+
+.loading {
+  text-align: center;
+  padding: 16px;
+  color: #666;
+}
+
+.load-more {
+  text-align: center;
+  margin-top: 16px;
+}
+
+.load-more button {
+  padding: 8px 24px;
+  background: #f0f0f0;
+  border: none;
+  border-radius: 4px;
+  color: #666;
+  cursor: pointer;
+}
+
+.load-more button:hover {
+  background: #e0e0e0;
+}

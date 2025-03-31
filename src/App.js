@@ -7,6 +7,7 @@ import Profile from './pages/Profile';
 import Settings from './pages/Settings';
 import ReadingHistory from './pages/ReadingHistory';
 import Favorites from './pages/Favorites';
+import Notes from './pages/Notes';
 import './App.css';
 
 function App() {
@@ -21,6 +22,7 @@ function App() {
                     <Route path="settings" element={<Settings />} />
                     <Route path="reading-history" element={<ReadingHistory />} />
                     <Route path="favorites" element={<Favorites />} />
+                    <Route path="notes" element={<Notes />} />
                     <Route path="about" element={<div>关于我们</div>} />
                     <Route path="terms" element={<div>使用条款</div>} />
                     <Route path="privacy" element={<div>隐私政策</div>} />

@@ -5,32 +5,32 @@ import api from '../../api';
 import 'react-toastify/dist/ReactToastify.css';
 import './index.css';
 
-const Favorites = () => {
-  const [favorites, setFavorites] = useState([]);
+const Notes = () => {
+  const [notes, setNotes] = useState([]);
   const [page, setPage] = useState(1);
   const [hasNext, setHasNext] = useState(0);
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
-    fetchFavorites();
+    fetchNotes();
   }, [page]);
 
-  const fetchFavorites = async () => {
+  const fetchNotes = async () => {
     try {
       setLoading(true);
-      const response = await api.post('/contents/collects/my', {
+      const response = await api.post('/contents/notes/list', {
         params: { page }
       });
       
       if (page === 1) {
-        setFavorites(response.list);
+        setNotes(response.list);
       } else {
-        setFavorites(prev => [...prev, ...response.list]);
+        setNotes(prev => [...prev, ...response.list]);
       }
       setHasNext(response.has_next);
     } catch (error) {
-      toast.error('获取收藏列表失败');
+      toast.error('获取笔记列表失败');
     } finally {
       setLoading(false);
     }
@@ -42,31 +42,46 @@ const Favorites = () => {
     }
   };
 
+  const formatDate = (dateStr) => {
+    const date = new Date(dateStr);
+    const today = new Date();
+    
+    if (date.toDateString() === today.toDateString()) {
+      return date.toLocaleTimeString('zh-CN', { 
+        hour: '2-digit', 
+        minute: '2-digit' 
+      });
+    }
+    
+    return `${date.getMonth() + 1}-${date.getDate()}`;
+  };
+
   const handleItemClick = (bookId, chapter) => {
     navigate(`/book/${bookId}/chapter/${chapter}`);
   };
 
   return (
-    <div className="favorites-container">
+    <div className="notes-container">
       <ToastContainer position="top-center" />
-      <h2>我的收藏</h2>
+      <h2>我的笔记</h2>
       
-      <div className="favorites-list">
-        {favorites.map(item => (
+      {/* TODO: 添加笔记管理功能，包括多选、删除等 */}
+      <div className="notes-list">
+        {notes.map(item => (
           <div 
             key={item.id} 
-            className="favorite-item"
-            onClick={() => handleItemClick(item.book_id, item.chapter)}
+            className="note-item"
+            onClick={() => handleItemClick(item.book_id, item.chapter_num)}
           >
-            <div className="favorite-header">
+            <div className="note-header">
               <span className="book-name">{item.book_name}</span>
               <span className="chapter-verse">
-                第{item.chapter}章 第{item.verse}节
+                第{item.chapter_num}章 第{item.verse_num}节
               </span>
+              <span className="note-time">{formatDate(item.created_at)}</span>
             </div>
-            <div className="favorite-content">{item.content}</div>
-            <div className="favorite-time">
-              {new Date(item.created_at).toLocaleDateString()}
+            <div className="note-content">
+              {item.content?.text}
             </div>
           </div>
         ))}
@@ -83,4 +98,4 @@ const Favorites = () => {
   );
 };
 
-export default Favorites;
+export default Notes;
