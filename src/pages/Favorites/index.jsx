@@ -94,24 +94,28 @@ const Favorites = () => {
       </div>
 
       <div className="favorites-list">
-        {favorites.map(item => (
-          <div 
-            key={item.id} 
-            className="favorite-item"
-            onClick={() => handleItemClick(item.book_id, item.chapter)}
-          >
-            <div className="favorite-header">
-              <span className="book-name">{item.book_name}</span>
-              <span className="chapter-verse">
-                第{item.chapter}章 第{item.verse}节
-              </span>
+        {favorites.length > 0 ? (
+          favorites.map(item => (
+            <div 
+              key={item.id} 
+              className="favorite-item"
+              onClick={() => handleItemClick(item.book_id, item.chapter)}
+            >
+              <div className="favorite-header">
+                <span className="book-name">{item.book_name}</span>
+                <span className="chapter-verse">
+                  第{item.chapter}章 第{item.verse}节
+                </span>
+              </div>
+              <div className="favorite-content">{item.content}</div>
+              <div className="favorite-time">
+                {new Date(item.created_at).toLocaleDateString()}
+              </div>
             </div>
-            <div className="favorite-content">{item.content}</div>
-            <div className="favorite-time">
-              {new Date(item.created_at).toLocaleDateString()}
-            </div>
-          </div>
-        ))}
+          ))
+        ) : (
+          !loading && <div className="empty-message">暂无相关记录</div>
+        )}
       </div>
 
       {loading && <div className="loading">加载中...</div>}

@@ -107,26 +107,29 @@ const Notes = () => {
         </select>
       </div>
 
-      {/* TODO: 添加笔记管理功能，包括多选、删除等 */}
       <div className="notes-list">
-        {notes.map(item => (
-          <div 
-            key={item.id} 
-            className="note-item"
-            onClick={() => handleItemClick(item.book_id, item.chapter_num)}
-          >
-            <div className="note-header">
-              <span className="book-name">{item.book_name}</span>
-              <span className="chapter-verse">
-                第{item.chapter_num}章 第{item.verse_num}节
-              </span>
-              <span className="note-time">{formatDate(item.created_at)}</span>
+        {notes.length > 0 ? (
+          notes.map(item => (
+            <div 
+              key={item.id} 
+              className="note-item"
+              onClick={() => handleItemClick(item.book_id, item.chapter_num)}
+            >
+              <div className="note-header">
+                <span className="book-name">{item.book_name}</span>
+                <span className="chapter-verse">
+                  第{item.chapter_num}章 第{item.verse_num}节
+                </span>
+                <span className="note-time">{formatDate(item.created_at)}</span>
+              </div>
+              <div className="note-content">
+                {item.content?.text}
+              </div>
             </div>
-            <div className="note-content">
-              {item.content?.text}
-            </div>
-          </div>
-        ))}
+          ))
+        ) : (
+          !loading && <div className="empty-message">暂无相关记录</div>
+        )}
       </div>
 
       {loading && <div className="loading">加载中...</div>}

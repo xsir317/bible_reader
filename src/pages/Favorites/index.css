@@ -84,3 +84,11 @@
   font-size: 14px;
   min-width: 120px;
 }
+
+
+.empty-message {
+  text-align: center;
+  padding: 20px;
+  color: #999;
+  font-size: 16px;
+}

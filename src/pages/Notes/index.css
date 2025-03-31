@@ -71,3 +71,10 @@
 .load-more button:hover {
   background: #e0e0e0;
 }
+
+.empty-message {
+  text-align: center;
+  padding: 20px;
+  color: #999;
+  font-size: 16px;
+}
