@@ -7,20 +7,50 @@ import './index.css';
 
 const Notes = () => {
   const [notes, setNotes] = useState([]);
+  const [books, setBooks] = useState([]);
+  const [selectedBookId, setSelectedBookId] = useState(null);
   const [page, setPage] = useState(1);
   const [hasNext, setHasNext] = useState(0);
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
+    fetchBooks();
+  }, []);
+
+  useEffect(() => {
+    setPage(1);
+    setNotes([]);
     fetchNotes();
+  }, [selectedBookId]);
+
+  useEffect(() => {
+    if (page > 1) {
+      fetchNotes();
+    }
   }, [page]);
+
+  const fetchBooks = async () => {
+    try {
+      const data = await api.post('/contents/content/books-menu');
+      const booksArray = Object.entries(data).map(([id, book]) => ({
+        id: parseInt(id),
+        ...book
+      }));
+      setBooks(booksArray);
+    } catch (error) {
+      toast.error('获取书籍列表失败');
+    }
+  };
 
   const fetchNotes = async () => {
     try {
       setLoading(true);
       const response = await api.post('/contents/notes/list', {
-        params: { page }
+        params: { 
+          page,
+          book_id: selectedBookId 
+        }
       });
       
       if (page === 1) {
@@ -65,6 +95,20 @@ const Notes = () => {
       <ToastContainer position="top-center" />
       <h2>我的笔记</h2>
       
+      <div className="filter-section">
+        <select 
+          value={selectedBookId || ''} 
+          onChange={(e) => setSelectedBookId(e.target.value ? Number(e.target.value) : null)}
+        >
+          <option value="">全部书卷</option>
+          {books.map(book => (
+            <option key={book.id} value={book.id}>
+              {book.name}
+            </option>
+          ))}
+        </select>
+      </div>
+
       {/* TODO: 添加笔记管理功能，包括多选、删除等 */}
       <div className="notes-list">
         {notes.map(item => (
