@@ -36,7 +36,7 @@ class SecurityHandler {
     // 计算请求校验和
     calculateChecksum(requestUri, content, timestamp) {
         const checkString = `REQUEST_URI=${requestUri}&content=${content}&timestamp=${timestamp}&secret_key=${this.aesKey}`;
-        console.log('checkString:', checkString);
+        // console.log('checkString:', checkString);
         return CryptoJS.MD5(checkString).toString();
     }
 
@@ -46,11 +46,9 @@ class SecurityHandler {
             // 1. 直接使用原始 axios 获取RSA公钥和session_id，避免触发拦截器
             const initResponse = await axios.get(`${BASE_URL}/common/system/init`);
             const { session_id: sessionId, public: publicKey } = initResponse.data.data;
-            console.log('initResponseData:', initResponse.data.data);
 
             // 2. 生成AES密钥
             const aesKey = CryptoJS.lib.WordArray.random(16).toString();
-            console.log('AES Key:', aesKey);
 
             // 3. 使用RSA加密AES密钥，指定 PKCS1_OAEP 填充
             const rsa = new NodeRSA({ encryptionScheme: 'pkcs1-oaep' });
@@ -141,7 +139,6 @@ class SecurityHandler {
     encryptRequestData(data) {
         if (!this.aesKey) return data;
 
-        console.log("data json: ", JSON.stringify(data));
         const iv = CryptoJS.lib.WordArray.random(16);
         const encrypted = CryptoJS.AES.encrypt(
             JSON.stringify(data),
@@ -159,7 +156,6 @@ class SecurityHandler {
 
     // 响应解密
     decryptResponseData(encryptedData) {
-        console.log("encryptedData:", encryptedData);
         if (!this.aesKey) return encryptedData;
         
         try {

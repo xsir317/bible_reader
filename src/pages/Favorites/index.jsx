@@ -46,11 +46,9 @@ const Favorites = () => {
   const fetchFavorites = async () => {
     try {
       setLoading(true);
-      const response = await api.post('/contents/collects/my', {
-        params: { 
-          page,
-          book_id: selectedBookId 
-        }
+      const response = await api.post('/contents/collects/my', { 
+        page,
+        book_id: selectedBookId 
       });
       
       if (page === 1) {

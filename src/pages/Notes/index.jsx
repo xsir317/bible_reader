@@ -46,11 +46,9 @@ const Notes = () => {
   const fetchNotes = async () => {
     try {
       setLoading(true);
-      const response = await api.post('/contents/notes/list', {
-        params: { 
-          page,
-          book_id: selectedBookId 
-        }
+      const response = await api.post('/contents/notes/list', { 
+        page,
+        book_id: selectedBookId 
       });
       
       if (page === 1) {

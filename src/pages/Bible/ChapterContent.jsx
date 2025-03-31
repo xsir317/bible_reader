@@ -29,7 +29,6 @@ export default function ChapterContent() {
                 setNotes(data.notes || {});
                 setCollectVerses(data.collect_verses || []);
                 setActiveExplain(null);
-                console.log(data);
             });
     }, [bookId, chapterId]);
 
