@@ -1,11 +1,11 @@
 import axios from 'axios';
 import { securityHandler } from './security';
-import { BASE_URL } from '../config';
+import { BASE_API_DOMAIN } from '../config';
 import { HTTP_STATUS } from '../constants/httpStatus';
 
 // 创建axios实例
 const http = axios.create({
-    baseURL: BASE_URL,
+    baseURL: BASE_API_DOMAIN,
     timeout: 10000
 });
 

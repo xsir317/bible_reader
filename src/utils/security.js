@@ -1,7 +1,7 @@
 import CryptoJS from 'crypto-js';
 import NodeRSA from 'node-rsa';
 import axios from 'axios';
-import { BASE_URL } from '../config';
+import { BASE_API_DOMAIN } from '../config';
 import { HTTP_STATUS } from '../constants/httpStatus';
 
 // 加密处理器
@@ -16,7 +16,7 @@ class SecurityHandler {
     // 获取服务器时间并计算时间差
     async syncServerTime() {
         try {
-            const response = await axios.get(`${BASE_URL}/common/system/time`);
+            const response = await axios.get(`${BASE_API_DOMAIN}/common/system/time`);
             const serverTime = response.data.data.time;
             const localTime = Math.floor(Date.now() / 1000);
             this.timeOffset = serverTime - localTime;
@@ -44,7 +44,7 @@ class SecurityHandler {
     async initializeCommunication() {
         try {
             // 1. 直接使用原始 axios 获取RSA公钥和session_id，避免触发拦截器
-            const initResponse = await axios.get(`${BASE_URL}/common/system/init`);
+            const initResponse = await axios.get(`${BASE_API_DOMAIN}/common/system/init`);
             const { session_id: sessionId, public: publicKey } = initResponse.data.data;
 
             // 2. 生成AES密钥
@@ -56,7 +56,7 @@ class SecurityHandler {
             const encryptedKey = rsa.encrypt(Buffer.from(aesKey), 'base64');
 
             // 4. 存储并发送密钥，使用原始 axios 避免触发拦截器
-            await axios.get(`${BASE_URL}/common/system/set-key`, {
+            await axios.get(`${BASE_API_DOMAIN}/common/system/set-key`, {
                 params: {
                     session_id: sessionId,
                     encrypted: encryptedKey
