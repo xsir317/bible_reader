@@ -13,6 +13,7 @@ const Profile = () => {
   const [email, setEmail] = useState('');
   const [verificationCode, setVerificationCode] = useState('');
   const [countdown, setCountdown] = useState(0);
+  const [inviter, setInviter] = useState('');  // 添加 inviter state
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -20,6 +21,18 @@ const Profile = () => {
     if (userId) {
       setIsLoggedIn(true);
       fetchUserInfo();
+    } else {
+      // 检查 URL 参数中是否有 inviter
+      const params = new URLSearchParams(window.location.search);
+      const inviterId = params.get('inviter');
+      if (inviterId) {
+        localStorage.setItem('inviter', inviterId);
+        setInviter(inviterId);
+      } else {
+        // 如果 URL 中没有，则尝试从 localStorage 获取
+        const savedInviter = localStorage.getItem('inviter');
+        if (savedInviter) setInviter(savedInviter);
+      }
     }
   }, []);
 
@@ -95,12 +108,13 @@ const Profile = () => {
       const response = await api.post('/user/identity/email-login', {
         email: email,
         code: verificationCode,
-        inviter: ''
+        inviter: inviter  // 使用存储的 inviter
       });
 
       localStorage.setItem('userId', response.user.id);
+      localStorage.removeItem('inviter');  // 登录成功后清除 inviter
       setIsLoggedIn(true);
-      await fetchUserInfo(); // 添加这行：立即获取用户信息
+      await fetchUserInfo();
       toast.success('登录成功');
     } catch (error) {
       toast.error(error.message || '登录失败');
