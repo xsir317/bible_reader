@@ -9,6 +9,7 @@ import ReadingHistory from './pages/ReadingHistory';
 import Favorites from './pages/Favorites';
 import Notes from './pages/Notes';
 import Share from './pages/Share';
+import Preview from './pages/Share/Preview';
 import './App.css';
 
 function App() {
@@ -25,6 +26,7 @@ function App() {
                     <Route path="favorites" element={<Favorites />} />
                     <Route path="notes" element={<Notes />} />
                     <Route path="share" element={<Share />} />
+                    <Route path="share/preview" element={<Preview />} />
                     <Route path="about" element={<div>关于我们</div>} />
                     <Route path="terms" element={<div>使用条款</div>} />
                     <Route path="privacy" element={<div>隐私政策</div>} />
