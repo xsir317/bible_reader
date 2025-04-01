@@ -38,19 +38,39 @@
 /* 书籍列表 */
 .book-list {
   display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
   gap: 12px;
+  padding: 12px;
 }
 
 .book-item {
-  padding: 16px;
+  aspect-ratio: 1;
+  padding: 8px;
   background: white;
   border-radius: 8px;
   box-shadow: 0 2px 4px rgba(0,0,0,0.1);
   transition: transform 0.2s;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
 }
 
 .book-item:hover {
   transform: translateY(-2px);
+}
+
+.book-item .book-short {
+  font-size: 24px;
+  font-weight: bold;
+  margin-bottom: 4px;
+}
+
+.book-item .book-name {
+  font-size: 12px;
+  color: #666;
+  text-align: center;
 }
 
 /* 章节按钮 */

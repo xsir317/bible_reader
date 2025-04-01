@@ -39,8 +39,8 @@ export default function BookList() {
                     className="book-item"
                     onClick={() => navigate(`/book/${book.id}`, { state: { book } })}
                 >
-                    <h3>{book.name}</h3>
-                    <p>共 {book.chapters} 章</p>
+                    <div className="book-short">{book.short}</div>
+                    <div className="book-name">{book.name}</div>
                 </div>
             ))}
         </div>
