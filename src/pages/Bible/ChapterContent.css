@@ -100,3 +100,99 @@
     border-radius: 4px;
     cursor: pointer;
 }
+
+/* 面包屑导航样式 */
+.breadcrumb-nav {
+    display: flex;
+    align-items: center;
+    margin-bottom: 15px;
+    position: relative;
+}
+
+.book-name, .chapter-name {
+    cursor: pointer;
+    color: #3f51b5;
+    font-weight: 500;
+}
+
+.book-name:hover, .chapter-name:hover {
+    text-decoration: underline;
+}
+
+.separator {
+    margin: 0 8px;
+    color: #666;
+}
+
+/* 章节选择器样式 */
+.chapter-selector {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    background-color: white;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    z-index: 100;
+    max-width: 300px;
+    padding: 10px;
+    margin-top: 5px;
+}
+
+.chapter-selector-content {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    max-height: 200px;
+    overflow-y: auto;
+}
+
+.chapter-item {
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.chapter-item:hover {
+    background-color: #f0f0f0;
+}
+
+.chapter-item.active {
+    background-color: #3f51b5;
+    color: white;
+    border-color: #3f51b5;
+}
+
+/* 导航按钮样式 */
+.chapter-controls {
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: 15px;
+}
+
+.chapter-nav {
+    display: flex;
+    gap: 5px;
+}
+
+.nav-btn {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #f5f5f5;
+    border: 1px solid #ddd;
+    cursor: pointer;
+}
+
+.nav-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}

@@ -24,7 +24,6 @@
   --secondary-color: #708090;
   --background-color: #1E1E1E;
   --text-color: #F5F5F5;
-  /* 其他颜色变量 */
 }
 
 /* 主题预览样式 */
@@ -63,11 +62,13 @@
 .theme-dark {
   --bg-primary: #1a1a1a;
   --bg-secondary: #2d2d2d;
-  --text-primary: #ffffff;
-  --text-secondary: #b3b3b3;
-  --border-color: #404040;
-  --verses-text: #e6e6e6;
-  --feature-bg: #2d2d2d;
+  --text-primary: #c8c8c8;     /* 调整主要文字颜色，避免太亮 */
+  --text-secondary: #a0a0a0;   /* 调整次要文字颜色 */
+  --border-color: #4a4a4a;
+  --verses-text: #e0e0e0;      /* 调整经文文字颜色 */
+  --feature-bg: #333333;
+  --book-item-bg: #2d2d2d;     /* 新增：书籍项目背景色 */
+  --book-item-hover: #3d3d3d;  /* 新增：书籍项目悬停背景色 */
 }
 
 body {
@@ -86,4 +87,14 @@ body {
 
 .feature-icons .feature-item {
   color: var(--text-primary);
+}
+
+/* 在文件末尾添加以下样式 */
+.theme-dark .book-item {
+  background-color: var(--book-item-bg);
+  transition: background-color var(--transition-speed);
+}
+
+.theme-dark .book-item:hover {
+  background-color: var(--book-item-hover);
 }

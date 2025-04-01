@@ -17,6 +17,10 @@ export default function ChapterContent() {
     const totalChapters = location.state?.totalChapters;
     const [isEditing, setIsEditing] = useState(false);
     const [noteText, setNoteText] = useState('');
+    // 新增书名状态
+    const [bookName, setBookName] = useState('');
+    // 新增章节选择器状态
+    const [showChapterSelector, setShowChapterSelector] = useState(false);
 
     useEffect(() => {
         api.post('/contents/content/chapter-content', {
@@ -29,6 +33,10 @@ export default function ChapterContent() {
                 setNotes(data.notes || {});
                 setCollectVerses(data.collect_verses || []);
                 setActiveExplain(null);
+                // 设置书名
+                if (data.book_meta && data.book_meta.name) {
+                    setBookName(data.book_meta.name);
+                }
             });
     }, [bookId, chapterId]);
 
@@ -45,12 +53,6 @@ export default function ChapterContent() {
                 state: { totalChapters }
             });
         }
-    };
-
-    const handleBack = () => {
-        navigate(`/book/${bookId}`, {
-            state: { book: location.state?.book }
-        });
     };
 
     // 添加一个函数来组织verses
@@ -186,28 +188,82 @@ export default function ChapterContent() {
         }
     };
 
+    // 处理章节选择
+    const handleChapterSelect = (chapterNum) => {
+        navigate(`/book/${bookId}/chapter/${chapterNum}`, {
+            state: { totalChapters }
+        });
+        setShowChapterSelector(false);
+    };
+
+    // 生成章节列表
+    const renderChapterSelector = () => {
+        if (!totalChapters) return null;
+        
+        const chapters = [];
+        for (let i = 1; i <= totalChapters; i++) {
+            chapters.push(
+                <div 
+                    key={i} 
+                    className={`chapter-item ${i === parseInt(chapterId) ? 'active' : ''}`}
+                    onClick={() => handleChapterSelect(i)}
+                >
+                    {i}
+                </div>
+            );
+        }
+        
+        return (
+            <div className="chapter-selector">
+                <div className="chapter-selector-content">
+                    {chapters}
+                </div>
+            </div>
+        );
+    };
+
+    // 处理导航到首页
+    const handleNavigateToHome = () => {
+        navigate('/');
+    };
+
     return (
         <div className="chapter-content">
+            {/* 面包屑导航 */}
+            <div className="breadcrumb-nav">
+                <span className="book-name" onClick={handleNavigateToHome}>
+                    {bookName}
+                </span>
+                <span className="separator"> &gt; </span>
+                <span 
+                    className="chapter-name" 
+                    onClick={() => setShowChapterSelector(!showChapterSelector)}
+                >
+                    第 {chapterId} 章
+                </span>
+                {showChapterSelector && renderChapterSelector()}
+            </div>
+
+            {/* 章节控制按钮 */}
             <div className="chapter-controls">
-                <button onClick={handleBack} className="back-btn">
-                    返回
-                </button>
                 <div className="chapter-nav">
                     <button
                         onClick={() => handleChapterChange(-1)}
                         disabled={parseInt(chapterId) === 1}
+                        className="nav-btn"
                     >
-                        上一章
+                        &lt;
                     </button>
                     <button
                         onClick={() => handleChapterChange(1)}
                         disabled={parseInt(chapterId) === totalChapters}
+                        className="nav-btn"
                     >
-                        下一章
+                        &gt;
                     </button>
                 </div>
             </div>
-            <h3>第 {chapterId} 章</h3>
+
             <div className="verses">
                 {groupVersesByExplain().map(group => {
                     const isActive = group.explain && 
@@ -268,7 +324,6 @@ export default function ChapterContent() {
                 }}
             >
                 <div className="verse-actions">
-                    // 在 Popover 中修改收藏按钮的 onClick 处理
                     <button 
                         onClick={handleCollect}
                     >

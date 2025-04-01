@@ -20,13 +20,13 @@ export default function Layout() {
 
     return (
         <div className="app-container">
+            <div className="content">
+                <Outlet />
+            </div>
             <nav className="tabs">
                 <Link to={lastBiblePath} onClick={handleBibleClick}>阅读圣经</Link>
                 <Link to="/profile">我的</Link>
             </nav>
-            <div className="content">
-                <Outlet />
-            </div>
         </div>
     );
 }

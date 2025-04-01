@@ -9,10 +9,7 @@ const Share = () => {
     // 获取URL参数
     const params = new URLSearchParams(location.search);
     const inviter = params.get('inviter');
-    const encodedForward = params.get('forward');
-    
-    // 解码 forward 参数，默认为 /profile
-    const forward = encodedForward ? decodeURIComponent(encodedForward) : '/profile';
+    const forward = params.get('forward') || '/profile';
 
     // 如果inviter存在，则保存到localStorage
     if (inviter) {
