@@ -3,6 +3,8 @@ import { useEffect, useState } from 'react';
 import api from '../../api';
 import './ChapterContent.css';
 import { Popover, IconButton } from '@mui/material';
+import { sharePage } from '../Share/Preview';
+import { FaShare } from 'react-icons/fa';  // 添加分享图标
 
 export default function ChapterContent() {
     const { bookId, chapterId } = useParams();
@@ -227,6 +229,12 @@ export default function ChapterContent() {
         navigate('/');
     };
 
+    const handleShare = () => {
+        const inviteCode = localStorage.getItem('inviteCode');
+        const forward = `/book/${bookId}/chapter/${chapterId}`;
+        sharePage(inviteCode, forward, navigate);  // 直接传入 navigate 函数
+    };
+
     return (
         <div className="chapter-content">
             {/* 面包屑导航 */}
@@ -258,6 +266,13 @@ export default function ChapterContent() {
                         className="nav-btn"
                     >
                         &gt;
+                    </button>
+                    <button
+                        onClick={handleShare}
+                        className="nav-btn share-btn"
+                        title="分享"
+                    >
+                        <FaShare />
                     </button>
                 </div>
             </div>

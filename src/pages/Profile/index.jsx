@@ -104,6 +104,7 @@ const Profile = () => {
       });
 
       localStorage.setItem('userId', response.user.id);
+      localStorage.setItem('inviteCode', response.user.invite_code);
       localStorage.removeItem('inviter');  // 登录成功后清除 inviter
       setIsLoggedIn(true);
       await fetchUserInfo();
@@ -177,7 +178,7 @@ const Profile = () => {
             <FaBug />
             <span>反馈问题</span>
           </div>
-          <div className="menu-item" onClick={() => navigate('/share')}>
+          <div className="menu-item" onClick={() => navigate('/share/preview')}>
             <FaShare />
             <span>推荐给好友</span>
           </div>

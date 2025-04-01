@@ -9,7 +9,7 @@ const Share = () => {
     // 获取URL参数
     const params = new URLSearchParams(location.search);
     const inviter = params.get('inviter');
-    const forward = params.get('forward') || '/profile';
+    const forward = params.get('forward') ? decodeURIComponent(params.get('forward')) : '/profile';
 
     // 如果inviter存在，则保存到localStorage
     if (inviter) {
@@ -17,6 +17,7 @@ const Share = () => {
     }
 
     // 跳转到指定页面
+    //console.log(forward);
     navigate(forward);
   }, [navigate, location]);
 
