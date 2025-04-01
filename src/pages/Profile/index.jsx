@@ -13,7 +13,7 @@ const Profile = () => {
   const [email, setEmail] = useState('');
   const [verificationCode, setVerificationCode] = useState('');
   const [countdown, setCountdown] = useState(0);
-  const [inviter, setInviter] = useState('');  // 添加 inviter state
+  const [inviter, setInviter] = useState('');
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -22,17 +22,9 @@ const Profile = () => {
       setIsLoggedIn(true);
       fetchUserInfo();
     } else {
-      // 检查 URL 参数中是否有 inviter
-      const params = new URLSearchParams(window.location.search);
-      const inviterId = params.get('inviter');
-      if (inviterId) {
-        localStorage.setItem('inviter', inviterId);
-        setInviter(inviterId);
-      } else {
-        // 如果 URL 中没有，则尝试从 localStorage 获取
-        const savedInviter = localStorage.getItem('inviter');
-        if (savedInviter) setInviter(savedInviter);
-      }
+      // 从 localStorage 获取邀请人信息
+      const savedInviter = localStorage.getItem('inviter');
+      if (savedInviter) setInviter(savedInviter);
     }
   }, []);
 
