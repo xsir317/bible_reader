@@ -231,21 +231,19 @@ export default function ChapterContent() {
         <div className="chapter-content">
             {/* 面包屑导航 */}
             <div className="breadcrumb-nav">
-                <span className="book-name" onClick={handleNavigateToHome}>
-                    {bookName}
-                </span>
-                <span className="separator"> &gt; </span>
-                <span 
-                    className="chapter-name" 
-                    onClick={() => setShowChapterSelector(!showChapterSelector)}
-                >
-                    第 {chapterId} 章
-                </span>
-                {showChapterSelector && renderChapterSelector()}
-            </div>
-
-            {/* 章节控制按钮 */}
-            <div className="chapter-controls">
+                <div className="breadcrumb-left">
+                    <span className="book-name" onClick={handleNavigateToHome}>
+                        {bookName}
+                    </span>
+                    <span className="separator"> &gt; </span>
+                    <span 
+                        className="chapter-name" 
+                        onClick={() => setShowChapterSelector(!showChapterSelector)}
+                    >
+                        第 {chapterId} 章
+                    </span>
+                    {showChapterSelector && renderChapterSelector()}
+                </div>
                 <div className="chapter-nav">
                     <button
                         onClick={() => handleChapterChange(-1)}

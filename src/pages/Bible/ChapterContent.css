@@ -102,11 +102,62 @@
 }
 
 /* 面包屑导航样式 */
+/* 新增面包屑导航布局 */
 .breadcrumb-nav {
     display: flex;
+    justify-content: space-between;
     align-items: center;
-    margin-bottom: 15px;
+    width: 100%;
     position: relative;
+    padding: 10px 0;
+}
+
+.breadcrumb-left {
+    display: flex;
+    align-items: center;
+    flex: 1;  /* 改用 flex: 1 替代 flex-grow: 1 */
+    min-width: 0;
+    margin-right: 16px;  /* 添加右侧间距 */
+}
+
+.breadcrumb-nav .chapter-nav {
+    display: flex;
+    min-width: 80px;  /* 设置最小宽度 */
+    gap: 8px;
+    flex: 0 0 auto;  /* 防止被压缩 */
+}
+
+.chapter-nav {
+    display: flex;
+    gap: 8px; /* 按钮间距 */
+    flex-shrink: 0; /* 防止按钮被压缩 */
+    margin-left: 16px; /* 与左侧内容保持间距 */
+}
+
+.nav-btn {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #f5f5f5;
+    border: 1px solid #ddd;
+    cursor: pointer;
+    color:#333;
+    padding: 0; /* 确保按钮不会因为内边距变大 */
+}
+
+.nav-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+/* 确保书名在需要时可以省略 */
+.book-name {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .book-name, .chapter-name {
@@ -173,26 +224,4 @@
     display: flex;
     justify-content: flex-end;
     margin-bottom: 15px;
-}
-
-.chapter-nav {
-    display: flex;
-    gap: 5px;
-}
-
-.nav-btn {
-    width: 36px;
-    height: 36px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background-color: #f5f5f5;
-    border: 1px solid #ddd;
-    cursor: pointer;
-}
-
-.nav-btn:disabled {
-    opacity: 0.5;
-    cursor: not-allowed;
 }

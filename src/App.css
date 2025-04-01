@@ -171,7 +171,6 @@ button:not(:disabled):hover {
 
   .chapter-nav {
     justify-content: space-between;
-    width: 100%;
   }
 
   .chapter-nav button {
