@@ -16,7 +16,7 @@ const getShareUrl = (inviter, forward) => {
   }
   
   if (forward) {
-    params.append('forward', encodeURIComponent(forward));
+    params.append('forward', forward);
   }
 
   const queryString = params.toString();
@@ -84,7 +84,7 @@ const SharePreview = ({ inviter, forward }) => {
       <div className="share-image" id="share-image">
         <QRCode 
           value={share_url}
-          size={120}
+          size={100}
           bgColor="white"
           fgColor="black"
           level="L"
